@@ -1,0 +1,222 @@
+---
+output: pdf_document
+---
+
+\begin{titlepage}
+
+  \center{\rule{15cm}{0pt}}
+  \begin{center}{\bf Universidade Federal do Paraná\\
+      Departamento de Estatística\\[7.5cm]
+
+      {\Large
+        ESTIMAÇÃO DOS PARÂMETROS DO MODELO AUTORREGRESSIVO DE PRIMEIRA ORDEM PELO MÉTODO DE MÁXIMA VEROSSIMILHANÇA}\\[3cm]
+
+      
+      { Nilton da Silva Reis Filho      - GRR2017}
+      
+      { Willian Henrique de Paula Ramos - GRR20170386}\\[3cm]
+
+      { Estatística Inferencial}
+
+
+      \vfill
+      
+      Curitiba,
+      
+      20 de novembro de 2018
+      \center{\rule{15cm}{0pt}}}
+  \end{center}
+\end{titlepage}
+
+\tableofcontents
+
+
+
+
+
+\newpage
+
+\section{1. Introdução}
+
+É comum profissionais de diversas áreas do conhecimento ordenar algum fenômeno estudado de acordo com ocorrências em um determinado espaço de tempo. Essa organização através de uma linha do tempo configura uma *Série Temporal*. Exemplos de séries temporais são:
+A bolsa de valores de São Paulo (BOVESPA), temperatura em um determinado espaço de tempo, dias de chuva por mês na cidade de Curitiba e o preço da criptomoeda Bitcoin desde sua criação.   
+
+Como exemplificado, há diversos tipos de séries temporais e várias diferentes maneiras de se análisar uma conjunto de dados desse tipo. Dentre os enfoques de análises para séries temporais, se destaca os modelos paramétricos ARIMA (autorregressive integrated moving avereged) proposto em 1970 por Box e Jenkins[1]. *Explicar ARIMA*. Uma particularidade dos modelos ARIMA(p,d,q) é o modelo autorregressivo de ordem p, o AR(p) ou ARIMA(p,0,0).       
+
+Modelos autorregressivos se caracterizam por terem seus valores atuais explicados pelos "p" valores anteriores. Por exemplo, queremos saber o valor de uma observação, compativel com um modelo AR(p), no momento *t*. Para isso teremos \(y_{t} = \rho_{1}y_{t-1} + \rho_{2} y_{t-2} + ...+ \rho_{p} y_{t-p} + \epsilon_{t}\). É importante notar que não há independencia entre as observações, portanto devemos ter cuidado ao trabalhar com esse tipo de modelo. 
+
+Neste trabalho iremos abordar exclusivamente o modelo autorregressivo de primeira ordem, ou seja, AR(1). Apresentaremos um conjunto de dados que é compativel com o modelo e com base nele estimaremos os parâmetros \(\rho\) e \(\sigma^{2}\) pelo método de maxíma verossimilhança. 
+
+
+\section{2. Modelo}
+
+Nesta seção apresentaremos alguns detalhes sobre o modelo AR(1) tais como a expressão do modelo, a descrição dos parâmetros e do espaço paramétrico, as formas de identificar um modelo autorregressivo de ordem 1 e alguns outros conceitos de séries temporais.
+
+
+\subsection{2.1 Expressão do modelo}
+
+Primeiramente temos a expressão do modelo AR(1)
+
+\begin{center}
+
+\(\huge{\displaystyle{ y_{t} = \rho y_{t-1}+ e_{t}}} \)
+
+\end{center}
+
+onde
+
+\begin{center}
+
+\(\huge{\displaystyle{e_{t} \sim N(0, \sigma^{2})}}\)
+
+\end{center}
+
+\subsection{2.2 Parâmetros}
+
+Descreveremos aqui os parâmetros e o espaço paramétrico.
+
+- \(\rho:\) Coeficiente de correlação, serve para ...
+
+- \(\sigma^{2}:\) Variância do Erro
+
+- \(e_{t}:\) ruído branco é a parte estocastica do modelo, define a aleatoridade do modelo
+
+Sendo assim o espaço paramétrico do modelo é:
+
+- \(\Theta :\)
+
+\subsection{2.3 Identificação do modelo}
+
+Para se identificar um modelo autorregressivo de primeira ordem é necessário
+
+
+\section{3. Análise descritiva}  
+
+Análisaremos os valores de fechamento de ações do google. A base de dados contém 105 observações coletadas entre os dias 07/02/2005 e 07/07/2005. O conjunto contém apenas duas colunas, uma com a dia e a outra com o preço de fechamento. 
+
+\subsection{3.1 Resumos do conjunto}
+
+Vamos mostrar agora algumas estatísticas dos preços de fechamento:
+
+```{r, results='hide', message=FALSE, echo=FALSE, warning=FALSE}
+library(ggplot2)
+library(knitr)
+library(magrittr)
+library(kableExtra)
+
+setwd("~/Área de Trabalho/Graduação/Inferência/Trabalho")
+dados <- read.table("google.csv", header = TRUE, sep = ",", dec = ".")
+df <- data.frame( Resumos = c("Mínimo", "Primeiro quartil", "Mediana","Terceiro quartil", "Média", "Máximo"),
+                  Valores = c(175, 187.4, 215.8, 224.7, 274.8, 304.1))
+dados$date <- as.Date(dados$date)
+
+```
+
+ 
+ 
+```{r, echo=FALSE, highlight=FALSE}
+df %>% kable("latex", booktabs = T) %>% kable_styling(latex_options = c("striped"))
+
+```
+
+\subsection{3.2 Análise Explanatória}
+
+Vamos mostrar primeiramente o gráfico de linha das obsevações.
+
+
+```{r, echo=FALSE, fig.height=4.5, fig.width=9}
+ggplot(data = dados, aes(x = date, y = price, group = 1)) + geom_point(colour = "darkblue")+ 
+  geom_line(colour = "blue") + theme_bw()+ scale_x_date() +
+  xlab("Mês") + ylab("Preço") + theme(axis.text=element_text(size= 10))
+```
+
+> Algum comentário sobre a estácionaridade
+
+
+
+\section{4. Estimação}
+
+Será utilizado o método de máxima verossimilhança para estimação dos parâmetros \(\displaystyle{\rho}\) e \(\displaystyle{\sigma^{2}}\).
+
+Pelo fato de que não se conhece a primeira observação de um modelo autorregressivo de primeira ordem, vamos utilizar duas expressões de verossimilhança para o modelo. A primeira é para a primeira observação onde podemos obter a expressão realizando o seguinte processo:
+
+> PROCESSO
+
+Assim temos a expressão da distribuição associada a primeira observação:
+
+\begin{center}
+
+\(\huge{\displaystyle{ Y_{1} \sim N(0, \frac{\sigma^{2}}{1-p^{2}})}}\) 
+
+\end{center}
+
+Já a segunda é a distribuição para as observações conhecidas. Para construi-lá apenas especificamos nos parâmetros da distribuição normal os parâmetros do modelo. Assim temos a expressão: 
+
+\begin{center}
+
+\(\displaystyle{ [Y_{i}|Y_{i-1}] \sim N(\rho \cdot y_{i-1} , \sigma^{2})}\) 
+
+\end{center}
+
+
+\subsection{4.1 Verossimilhança}
+
+
+Para obter as estimativas que maximazam a função de verossimilhança foi utilizado o software R e o pacote *bbmle* com as funções *mle2*, *cofident* (obter intervalos de confiança) e também a função optim que faz parte do pacote base do R.
+
+\subsubsection{4.1.1 Função de log-verossimilhança}
+
+Começaremos montando a função de log-verossimilhança no R:
+
+```{r, message=FALSE}
+
+
+ll <- function(rho, sigma, dados){
+  n <- length(dados)
+  fun <- sum(dnorm(dados[2:n], mean = rho*dados[1:(n-1)], sd = sigma, log = TRUE))
+  return(-fun)
+}
+
+```
+
+\subsubsection{4.1.2 Maximização da log-verossimilhança}
+
+Com a utilização da função mle2 do pacote bbmle vamos maximizar a função de log-verossimilhança. Para a função funcionar precisamos de estimativas iniciais de valores para o parâmetro. Vamos utilizar o método dos momentos para obter essas estimativas.
+
+> Método dos momentos
+
+
+```{r, message=FALSE, echo=FALSE, results=FALSE}
+library(bbmle)
+```
+
+
+```{r}
+
+emv <- mle2(ll, list(rho = 0.4, sigma = 0.7), data=list(dados=dados$price),
+            lower = list(rho = -1, sigma = 0),
+            upper = list(rho = 1, sigma = Inf),
+            method = "L-BFGS-B")
+
+emv
+
+```
+
+
+
+```{r}
+
+```
+
+
+\subsubsection{4.1.3 Intervalo de confiança}
+
+
+\section{5. Referências}
+
+[1] Box e Jenkins
+\newline
+[2] Pedro Moretin
+\newline
+[3] Master sinape
+
